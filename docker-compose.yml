@@ -2,11 +2,12 @@ version: '3'
 
 services:
   db:
-    image: postgres
+    image: mariadb:latest
+    restart: always
     volumes:
-      - ./db:/var/lib/postgresql/data
-    ports:
-      - 5432:5432
+      - ./db:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: example
     networks:
       - db_network
   web:
@@ -14,14 +15,14 @@ services:
       context: .
       dockerfile: ./docker/django/Dockerfile
     volumes:
-      - ./app:/app
-      - static_volume:/app/static
+      - ./web:/web
+      - static_volume:/web/static
       - ./env/aws:/root/.aws
     ports:
       - 8000:8000
     depends_on:
       - db
-    command: gunicorn cfg.wsgi:application --bind 0.0.0.0:8000
+    command: gunicorn project.wsgi:application --bind 0.0.0.0:8000
     networks:
       - web_network
       - db_network
@@ -36,7 +37,7 @@ services:
     networks:
       - web_network
     volumes:
-      - static_volume:/app/static
+      - static_volume:/web/static
 
 networks: 
     web_network:
