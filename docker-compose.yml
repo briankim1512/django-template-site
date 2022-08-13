@@ -4,10 +4,13 @@ services:
   db:
     image: mariadb:latest
     restart: always
+    environment:
+      MARIADB_DATABASE: docker
+      MARIADB_USER: docker
+      MARIADB_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: password
     volumes:
       - ./db:/var/lib/mysql
-    environment:
-      MYSQL_ROOT_PASSWORD: example
     networks:
       - db_network
   web:
